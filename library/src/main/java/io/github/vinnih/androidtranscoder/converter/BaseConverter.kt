@@ -21,14 +21,15 @@ abstract class BaseConverter(
 ) {
     val extractor = MediaExtractor()
     var codec: MediaCodec
+    var format: MediaFormat
 
     abstract suspend fun execute(): File
 
     init {
-        Log.d(TAG, "Creating extractor and media codec")
         extractor.setDataSource(inputFile.absolutePath)
         val trackIndex = findAudioTrack()
-        codec = MediaCodec.createDecoderByType(extractor.getTrackFormat(trackIndex).getString(MediaFormat.KEY_MIME)!!)
+        format = extractor.getTrackFormat(trackIndex)
+        codec = MediaCodec.createDecoderByType(format.getString(MediaFormat.KEY_MIME)!!)
         extractor.selectTrack(trackIndex)
         codec.configure(extractor.getTrackFormat(trackIndex), null, null, 0)
         codec.start()
