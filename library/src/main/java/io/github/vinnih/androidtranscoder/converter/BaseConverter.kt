@@ -3,7 +3,6 @@ package io.github.vinnih.androidtranscoder.converter
 import android.media.MediaCodec
 import android.media.MediaExtractor
 import android.media.MediaFormat
-import android.util.Log
 import io.github.vinnih.androidtranscoder.exceptions.AudioTrackNotFoundException
 import io.github.vinnih.androidtranscoder.types.AudioType
 import java.io.File
@@ -17,7 +16,7 @@ abstract class BaseConverter(
     val outputFile: File,
     val onProgress: (Int) -> Unit = {},
     val onSuccess: (File) -> Unit = {},
-    val onFailure: () -> Unit = {}
+    val onFailure: () -> Unit = {},
 ) {
     val extractor = MediaExtractor()
     var codec: MediaCodec
