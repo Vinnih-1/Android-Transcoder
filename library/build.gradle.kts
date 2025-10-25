@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.android)
+    alias(libs.plugins.ktlint.android)
 }
 
 android {
@@ -26,6 +27,11 @@ android {
     kotlinOptions {
         jvmTarget = "11"
     }
+}
+
+ktlint {
+    android.set(true)
+    verbose.set(true)
 }
 
 dependencies {
