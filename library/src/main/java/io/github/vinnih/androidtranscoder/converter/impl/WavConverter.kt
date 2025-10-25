@@ -13,6 +13,8 @@ import java.io.File
 import java.io.RandomAccessFile
 import java.nio.ByteBuffer
 
+private const val WAV_HEADER_SIZE: Int = 44
+
 class WavConverter(
     inputFile: File,
     outputFile: File,
@@ -20,13 +22,13 @@ class WavConverter(
     onSuccess: (File) -> Unit,
     onFailure: () -> Unit,
 ) : BaseConverter(
-    audioType = AudioType.WAV,
-    inputFile = inputFile,
-    outputFile = outputFile,
-    onProgress = onProgress,
-    onSuccess = onSuccess,
-    onFailure = onFailure,
-) {
+        audioType = AudioType.WAV,
+        inputFile = inputFile,
+        outputFile = outputFile,
+        onProgress = onProgress,
+        onSuccess = onSuccess,
+        onFailure = onFailure,
+    ) {
     private val bufferInfo = MediaCodec.BufferInfo()
     private val totalSize: Long = inputFile.length()
     private var progressCount: Int = 0
@@ -34,7 +36,6 @@ class WavConverter(
     private var dataSize: Long = 0L
     private var isInputEOS: Boolean = false
     private var isOutputEOS: Boolean = false
-    private val WAV_HEADER_SIZE: Int = 44
     private val file = RandomAccessFile(outputFile, "rw")
 
     override suspend fun execute(): File =
@@ -121,9 +122,7 @@ class WavConverter(
         Log.d(TAG, "WAV header written successfully.")
     }
 
-    private fun writeFile(
-        index: Int,
-    ) {
+    private fun writeFile(index: Int) {
         when (index) {
             MediaCodec.INFO_OUTPUT_FORMAT_CHANGED -> Log.d(TAG, "Output format changed: ${codec.outputFormat}")
             MediaCodec.INFO_TRY_AGAIN_LATER -> {
