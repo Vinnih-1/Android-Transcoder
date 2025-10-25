@@ -1,6 +1,6 @@
 # Android Audio Transcoder
 
-**Android Transcoder** is an easy way to convert your audio files into another format for Android without ffmpeg-kit.
+**Android Transcoder** Android Transcoder is an easy way to convert audio files between formats on Android, without ffmpeg-kit.
 
 - [Installation](https://github.com/Vinnih-1/Android-Transcoder/edit/develop/README.md#installation)
 - [Quickstart](https://github.com/Vinnih-1/Android-Transcoder/edit/develop/README.md#quickstart)
