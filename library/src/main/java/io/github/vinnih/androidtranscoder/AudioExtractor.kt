@@ -101,13 +101,8 @@ class AudioExtractor(
     fun checkCompatibility(): Boolean {
         val extension = inputFile.extension
         return AudioType.entries
-            .map { it.value }
-            .any {
-                val bool = it.equals(extension.lowercase(), ignoreCase = true)
-                Log.d(TAG, "checkCompatibility: $bool")
-
-                it.equals(extension.lowercase(), ignoreCase = true)
-            }
+            .map { it.value.removePrefix(".") }
+            .any { it.equals(extension.lowercase(), ignoreCase = true) }
     }
 
     fun findAudioTrack(): Int {
