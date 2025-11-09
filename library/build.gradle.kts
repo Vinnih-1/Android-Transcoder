@@ -35,6 +35,9 @@ ktlint {
 }
 
 dependencies {
+    implementation(libs.tandroid.lame) {
+        exclude(group = "com.android.support")
+    }
     implementation(libs.androidx.core.ktx)
     implementation(libs.media3.extractor)
     testImplementation(libs.junit)
