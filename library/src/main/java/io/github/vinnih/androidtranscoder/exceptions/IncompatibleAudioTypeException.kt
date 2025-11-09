@@ -1,5 +1,5 @@
 package io.github.vinnih.androidtranscoder.exceptions
 
-class AudioTrackNotFoundException(
+class IncompatibleAudioTypeException(
     override val message: String,
 ) : Exception(message)
