@@ -1,10 +1,9 @@
-package io.github.vinnih.androidtranscoder.converter
+package io.github.vinnih.androidtranscoder.encoder
 
-import io.github.vinnih.androidtranscoder.converter.impl.WavConverter
 import io.github.vinnih.androidtranscoder.types.AudioType
 import java.io.File
 
-class ConverterManager {
+class EncoderManager {
     companion object {
         suspend fun convert(
             input: File,
@@ -16,7 +15,7 @@ class ConverterManager {
         ) {
             when (to) {
                 AudioType.MP3 -> TODO()
-                AudioType.WAV -> WavConverter(input, output, progress, success, error).execute()
+                else -> {}
             }
         }
     }

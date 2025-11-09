@@ -1,6 +1,6 @@
 package io.github.vinnih.androidtranscoder
 
-import io.github.vinnih.androidtranscoder.converter.ConverterManager
+import io.github.vinnih.androidtranscoder.encoder.EncoderManager
 import io.github.vinnih.androidtranscoder.types.AudioType
 import java.io.File
 
@@ -16,6 +16,6 @@ class AndroidTranscoder(
         error: () -> Unit = {},
     ) {
         if (!outputFile.exists()) outputFile.createNewFile()
-        ConverterManager.convert(file, outputFile, to, progress, success, error)
+        EncoderManager.convert(file, outputFile, to, progress, success, error)
     }
 }
