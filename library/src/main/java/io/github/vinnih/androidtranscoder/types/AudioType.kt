@@ -5,4 +5,7 @@ enum class AudioType(
 ) {
     MP3(".mp3"),
     WAV(".wav"),
+    FLAC(".flac"),
+    M4A(".m4a"),
+    AAC(".aac"),
 }
