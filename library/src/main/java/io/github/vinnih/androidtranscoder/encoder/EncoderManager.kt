@@ -1,22 +1,35 @@
 package io.github.vinnih.androidtranscoder.encoder
 
+import io.github.vinnih.androidtranscoder.encoder.impl.Mp3Encoder
+import io.github.vinnih.androidtranscoder.encoder.impl.WavEncoder
+import io.github.vinnih.androidtranscoder.extractor.WavReader
 import io.github.vinnih.androidtranscoder.types.AudioType
 import java.io.File
 
-class EncoderManager {
+internal class EncoderManager {
     companion object {
         suspend fun convert(
-            input: File,
-            output: File,
+            reader: WavReader,
             to: AudioType,
-            progress: (Int) -> Unit,
-            success: (File) -> Unit,
-            error: () -> Unit,
-        ) {
-            when (to) {
-                AudioType.MP3 -> TODO()
-                else -> {}
-            }
+            fileDir: String,
+        ): File {
+            val file =
+                when (to) {
+                    AudioType.MP3 -> Mp3Encoder(reader, fileDir).encode()
+                    AudioType.WAV -> WavEncoder(reader, fileDir).encode()
+                    AudioType.M4A -> TODO()
+                    AudioType.AAC -> TODO()
+                    AudioType.FLAC -> TODO()
+                }
+
+            return file
+        }
+
+        fun checkCompatibility(file: File): Boolean {
+            val extension = file.extension
+            return AudioType.entries
+                .map { it.value.removePrefix(".") }
+                .any { it.equals(extension, ignoreCase = true) }
         }
     }
 }
