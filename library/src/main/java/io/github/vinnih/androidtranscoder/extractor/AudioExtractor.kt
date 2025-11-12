@@ -1,13 +1,10 @@
-package io.github.vinnih.androidtranscoder
+package io.github.vinnih.androidtranscoder.extractor
 
 import android.media.MediaCodec
 import android.media.MediaExtractor
 import android.media.MediaFormat
 import android.util.Log
 import io.github.vinnih.androidtranscoder.exceptions.AudioTrackNotFoundException
-import io.github.vinnih.androidtranscoder.exceptions.IncompatibleAudioTypeException
-import io.github.vinnih.androidtranscoder.reader.WavReader
-import io.github.vinnih.androidtranscoder.types.AudioType
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.io.File
@@ -16,7 +13,7 @@ import java.io.RandomAccessFile
 const val TIMEOUT_US = 10000L
 const val TAG = "AudioExtractor"
 
-class AudioExtractor(
+internal class AudioExtractor(
     val inputFile: File,
     cacheDir: String,
 ) {
@@ -31,9 +28,6 @@ class AudioExtractor(
     var mediaFormat: MediaFormat
 
     init {
-        if (!checkCompatibility()) {
-            throw IncompatibleAudioTypeException("Incompatible Audio Type")
-        }
         mediaExtractor.setDataSource(inputFile.absolutePath).also { mediaExtractor.selectTrack(findAudioTrack()) }
         mediaFormat = mediaExtractor.getTrackFormat(findAudioTrack())
         mediaCodec = MediaCodec.createDecoderByType(mediaFormat.getString(MediaFormat.KEY_MIME)!!)
@@ -97,13 +91,6 @@ class AudioExtractor(
 
             return@withContext WavReader(channels, sampleRate, dataSize, outputFile)
         }
-
-    fun checkCompatibility(): Boolean {
-        val extension = inputFile.extension
-        return AudioType.entries
-            .map { it.value.removePrefix(".") }
-            .any { it.equals(extension.lowercase(), ignoreCase = true) }
-    }
 
     fun findAudioTrack(): Int {
         for (i in 0 until mediaExtractor.trackCount) {
