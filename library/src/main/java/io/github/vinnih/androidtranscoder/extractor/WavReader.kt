@@ -1,11 +1,10 @@
-package io.github.vinnih.androidtranscoder.reader
+package io.github.vinnih.androidtranscoder.extractor
 
 import android.util.Log
-import io.github.vinnih.androidtranscoder.TAG
 import java.io.File
 import java.io.RandomAccessFile
 
-class WavReader(
+internal class WavReader(
     val channels: Int,
     val sampleRate: Int,
     val dataSize: Int,

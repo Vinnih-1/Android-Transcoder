@@ -3,7 +3,7 @@ package io.github.vinnih.androidtranscoder.encoder.impl
 import android.util.Log
 import com.naman14.androidlame.AndroidLame
 import com.naman14.androidlame.LameBuilder
-import io.github.vinnih.androidtranscoder.reader.WavReader
+import io.github.vinnih.androidtranscoder.extractor.WavReader
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.io.File
@@ -13,7 +13,7 @@ import java.nio.ByteOrder
 
 private const val TAG = "Mp3Encoder"
 
-class Mp3Encoder(
+internal class Mp3Encoder(
     val reader: WavReader,
     fileDir: String,
 ) {
