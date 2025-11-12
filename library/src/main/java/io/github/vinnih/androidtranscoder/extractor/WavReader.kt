@@ -12,11 +12,7 @@ internal class WavReader(
 ) {
     private val randomAccessFile = RandomAccessFile(data, "rw")
 
-    init {
-        writeHeader()
-    }
-
-    private fun writeHeader() {
+    fun writeHeader(): WavReader {
         val header = ByteArray(44)
         val bitsPerSample = 16
         val totalDataLength = dataSize + 36
@@ -70,7 +66,15 @@ internal class WavReader(
         randomAccessFile.seek(0)
         randomAccessFile.write(header)
         Log.d(TAG, "WAV header written successfully.")
+
+        return this
     }
 
-    fun read(buf: ByteArray): Int = randomAccessFile.read(buf)
+    fun read(buffer: ByteArray): Int = randomAccessFile.read(buffer)
+
+    fun dispose() {
+        data.delete()
+        randomAccessFile.close()
+        Log.d(TAG, "WAV file disposed successfully.")
+    }
 }
