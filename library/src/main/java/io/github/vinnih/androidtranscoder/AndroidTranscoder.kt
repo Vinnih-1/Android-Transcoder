@@ -1,7 +1,6 @@
 package io.github.vinnih.androidtranscoder
 
 import android.content.Context
-import android.util.Log
 import io.github.vinnih.androidtranscoder.encoder.EncoderManager
 import io.github.vinnih.androidtranscoder.exceptions.IncompatibleAudioTypeException
 import io.github.vinnih.androidtranscoder.extractor.AudioExtractor
@@ -22,9 +21,7 @@ class AndroidTranscoder(
         val reader = AudioExtractor(file, context.cacheDir.absolutePath).extract()
         val file = EncoderManager.convert(reader, to, context.filesDir.absolutePath)
 
-        reader.data
-            .delete()
-            .also { Log.d(TAG, "Deleting cached wave file") }
+        reader.dispose()
 
         return file
     }
