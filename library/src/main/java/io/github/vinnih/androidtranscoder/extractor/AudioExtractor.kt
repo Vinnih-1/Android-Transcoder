@@ -4,6 +4,7 @@ import android.media.MediaCodec
 import android.media.MediaExtractor
 import android.media.MediaFormat
 import android.util.Log
+import io.github.vinnih.androidtranscoder.TAG
 import io.github.vinnih.androidtranscoder.exceptions.AudioTrackNotFoundException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -46,7 +47,7 @@ internal class AudioExtractor(
                 if (!isInEOS) {
                     val indexInputBuffer = mediaCodec.dequeueInputBuffer(TIMEOUT_US)
 
-                    if (indexInputBuffer > 0) {
+                    if (indexInputBuffer >= 0) {
                         val inputBuffer = mediaCodec.getInputBuffer(indexInputBuffer)
                         val sampleSize = mediaExtractor.readSampleData(inputBuffer!!, 0)
 
@@ -89,7 +90,14 @@ internal class AudioExtractor(
             val channels = mediaFormat.getInteger(MediaFormat.KEY_CHANNEL_COUNT)
             val sampleRate = mediaFormat.getInteger(MediaFormat.KEY_SAMPLE_RATE)
 
-            return@withContext WavReader(channels, sampleRate, dataSize, outputFile)
+            val wavReader = WavReader(channels, sampleRate, dataSize, outputFile).writeHeader()
+
+            fileOutputStream.close()
+            mediaCodec.stop()
+            mediaCodec.release()
+            mediaExtractor.release()
+
+            return@withContext wavReader
         }
 
     fun findAudioTrack(): Int {
