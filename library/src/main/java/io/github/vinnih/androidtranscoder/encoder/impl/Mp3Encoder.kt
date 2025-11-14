@@ -4,9 +4,9 @@ import android.util.Log
 import com.naman14.androidlame.AndroidLame
 import com.naman14.androidlame.LameBuilder
 import io.github.vinnih.androidtranscoder.TAG
+import io.github.vinnih.androidtranscoder.encoder.EncoderBase
 import io.github.vinnih.androidtranscoder.extractor.WavReader
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
+import io.github.vinnih.androidtranscoder.status.StatusProgress
 import java.io.File
 import java.io.FileOutputStream
 import java.nio.ByteBuffer
@@ -15,7 +15,7 @@ import java.nio.ByteOrder
 internal class Mp3Encoder(
     val reader: WavReader,
     fileDir: String,
-) {
+) : EncoderBase() {
     val outputFile: File =
         File(fileDir, "${reader.data.nameWithoutExtension}.mp3")
             .apply {
@@ -32,33 +32,39 @@ internal class Mp3Encoder(
                 setQuality(5)
             }.build()
 
-    suspend fun encode(): File =
-        withContext(Dispatchers.IO) {
-            val pcmBuffer = ByteArray(8192)
-            val mp3Buffer = ByteArray(8192)
-            var bytesRead = 0
+    override fun encode(progress: StatusProgress): File {
+        val pcmBuffer = ByteArray(8192)
+        val mp3Buffer = ByteArray(8192)
+        var (bytesRead, totalBytesRead) = Pair(0, 0)
 
-            Log.d(TAG, "Reading ${reader.data.nameWithoutExtension} and encoding to mp3.")
+        Log.d(TAG, "Reading ${reader.data.nameWithoutExtension} and encoding to mp3.")
 
-            while (reader.read(pcmBuffer).also { bytesRead = it } > 0) {
-                val byteBuffer =
-                    ByteBuffer
-                        .wrap(pcmBuffer)
-                        .order(ByteOrder.LITTLE_ENDIAN)
-                        .asShortBuffer()
-                val shortBuffer = ShortArray(byteBuffer.remaining())
-                byteBuffer.get(shortBuffer, 0, byteBuffer.remaining())
+        while (
+            reader.read(pcmBuffer).also {
+                bytesRead = it
+                totalBytesRead += it
+            } > 0
+        ) {
+            val byteBuffer =
+                ByteBuffer
+                    .wrap(pcmBuffer)
+                    .order(ByteOrder.LITTLE_ENDIAN)
+                    .asShortBuffer()
+            val shortBuffer = ShortArray(byteBuffer.remaining())
 
-                val encoded = androidLame.encodeBufferInterLeaved(shortBuffer, (bytesRead / (2 * reader.channels)), mp3Buffer)
+            byteBuffer.get(shortBuffer, 0, byteBuffer.remaining())
+            progress.updateEncodeProgress(reader.data.length(), totalBytesRead.toLong())
 
-                fileOutputStream.write(mp3Buffer, 0, encoded)
-            }
-            val flush = androidLame.flush(mp3Buffer).also { Log.d(TAG, "Flushing final mp3 buffer.") }
+            val encoded = androidLame.encodeBufferInterLeaved(shortBuffer, (bytesRead / (2 * reader.channels)), mp3Buffer)
 
-            fileOutputStream.write(mp3Buffer, 0, flush)
-            fileOutputStream.close()
-            androidLame.close()
-
-            return@withContext outputFile
+            fileOutputStream.write(mp3Buffer, 0, encoded)
         }
+        val flush = androidLame.flush(mp3Buffer).also { Log.d(TAG, "Flushing final mp3 buffer.") }
+
+        fileOutputStream.write(mp3Buffer, 0, flush)
+        fileOutputStream.close()
+        androidLame.close()
+
+        return outputFile
+    }
 }

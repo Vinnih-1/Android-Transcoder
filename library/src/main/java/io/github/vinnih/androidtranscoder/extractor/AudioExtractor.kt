@@ -6,8 +6,7 @@ import android.media.MediaFormat
 import android.util.Log
 import io.github.vinnih.androidtranscoder.TAG
 import io.github.vinnih.androidtranscoder.exceptions.AudioTrackNotFoundException
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
+import io.github.vinnih.androidtranscoder.status.StatusProgress
 import java.io.File
 import java.io.RandomAccessFile
 
@@ -35,69 +34,69 @@ internal class AudioExtractor(
         fileOutputStream.seek(44)
     }
 
-    suspend fun extract(): WavReader =
-        withContext(Dispatchers.IO) {
-            var isOutEOS = false
-            var isInEOS = false
-            val bufferInfo = MediaCodec.BufferInfo()
-            var dataSize = 0
+    fun extract(progress: StatusProgress): WavReader {
+        var isOutEOS = false
+        var isInEOS = false
+        val bufferInfo = MediaCodec.BufferInfo()
+        var dataSize = 0
+        val channels = mediaFormat.getInteger(MediaFormat.KEY_CHANNEL_COUNT)
+        val sampleRate = mediaFormat.getInteger(MediaFormat.KEY_SAMPLE_RATE)
 
-            while (!isOutEOS) {
-                if (!isInEOS) {
-                    val indexInputBuffer = mediaCodec.dequeueInputBuffer(TIMEOUT_US)
+        while (!isOutEOS) {
+            if (!isInEOS) {
+                val indexInputBuffer = mediaCodec.dequeueInputBuffer(TIMEOUT_US)
 
-                    if (indexInputBuffer >= 0) {
-                        val inputBuffer = mediaCodec.getInputBuffer(indexInputBuffer)
-                        val sampleSize = mediaExtractor.readSampleData(inputBuffer!!, 0)
+                if (indexInputBuffer >= 0) {
+                    val inputBuffer = mediaCodec.getInputBuffer(indexInputBuffer)
+                    val sampleSize = mediaExtractor.readSampleData(inputBuffer!!, 0)
 
-                        if (sampleSize < 0) {
-                            mediaCodec.queueInputBuffer(indexInputBuffer, 0, 0, 0, MediaCodec.BUFFER_FLAG_END_OF_STREAM)
-                            isInEOS = true
-                        } else {
-                            mediaCodec.queueInputBuffer(indexInputBuffer, 0, sampleSize, mediaExtractor.sampleTime, 0)
-                            mediaExtractor.advance()
-                            dataSize += sampleSize
-                        }
-                    }
-                }
-
-                when (val indexOutputBuffer = mediaCodec.dequeueOutputBuffer(bufferInfo, TIMEOUT_US)) {
-                    MediaCodec.INFO_TRY_AGAIN_LATER -> {
-                        Log.d(TAG, "No output buffer ready.")
-                        Thread.sleep(10)
-                    }
-
-                    in 0..Int.MAX_VALUE -> {
-                        val outputBuffer = mediaCodec.getOutputBuffer(indexOutputBuffer)!!
-
-                        if (bufferInfo.size > 0) {
-                            val pcmChunk = ByteArray(bufferInfo.size)
-                            outputBuffer.get(pcmChunk)
-                            fileOutputStream.write(pcmChunk, 0, pcmChunk.size)
-                            dataSize += pcmChunk.size
-                            outputBuffer.clear()
-                        }
-
-                        if (bufferInfo.flags and MediaCodec.BUFFER_FLAG_END_OF_STREAM != 0) {
-                            isOutEOS = true
-                            Log.d(TAG, "Output EOS detected. Decoding complete.")
-                        }
-                        mediaCodec.releaseOutputBuffer(indexOutputBuffer, false)
+                    if (sampleSize < 0) {
+                        mediaCodec.queueInputBuffer(indexInputBuffer, 0, 0, 0, MediaCodec.BUFFER_FLAG_END_OF_STREAM)
+                        isInEOS = true
+                    } else {
+                        mediaCodec.queueInputBuffer(indexInputBuffer, 0, sampleSize, mediaExtractor.sampleTime, 0)
+                        mediaExtractor.advance()
+                        dataSize += sampleSize
                     }
                 }
             }
-            val channels = mediaFormat.getInteger(MediaFormat.KEY_CHANNEL_COUNT)
-            val sampleRate = mediaFormat.getInteger(MediaFormat.KEY_SAMPLE_RATE)
 
-            val wavReader = WavReader(channels, sampleRate, dataSize, outputFile).writeHeader()
+            when (val indexOutputBuffer = mediaCodec.dequeueOutputBuffer(bufferInfo, TIMEOUT_US)) {
+                MediaCodec.INFO_TRY_AGAIN_LATER -> {
+                    Log.d(TAG, "No output buffer ready.")
+                    Thread.sleep(10)
+                }
 
-            fileOutputStream.close()
-            mediaCodec.stop()
-            mediaCodec.release()
-            mediaExtractor.release()
+                in 0..Int.MAX_VALUE -> {
+                    val outputBuffer = mediaCodec.getOutputBuffer(indexOutputBuffer)!!
 
-            return@withContext wavReader
+                    if (bufferInfo.size > 0) {
+                        val pcmChunk = ByteArray(bufferInfo.size)
+                        outputBuffer.get(pcmChunk)
+                        fileOutputStream.write(pcmChunk, 0, pcmChunk.size)
+                        progress.updateDecodeProgress(inputFile.length(), dataSize.toLong())
+                        outputBuffer.clear()
+                    }
+
+                    if (bufferInfo.flags and MediaCodec.BUFFER_FLAG_END_OF_STREAM != 0) {
+                        isOutEOS = true
+                        Log.d(TAG, "Output EOS detected. Decoding complete.")
+                        progress.updateDecodeProgress(dataSize.toLong(), dataSize.toLong())
+                    }
+                    mediaCodec.releaseOutputBuffer(indexOutputBuffer, false)
+                }
+            }
         }
+
+        val wavReader = WavReader(channels, sampleRate, dataSize, outputFile).writeHeader()
+
+        fileOutputStream.close()
+        mediaCodec.stop()
+        mediaCodec.release()
+        mediaExtractor.release()
+
+        return wavReader
+    }
 
     fun findAudioTrack(): Int {
         for (i in 0 until mediaExtractor.trackCount) {
