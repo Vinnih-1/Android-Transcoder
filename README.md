@@ -17,26 +17,14 @@ Not implemented yet.
 
 ## Quickstart
 ```kotlin
-AndroidTranscoder(
-    file = file,
-    to = AudioType.WAV,
-    output = "teste1",
-).converter(
-    progress = { // Optional
-        Log.d(TAG, "Progress: $it%")
-    },
-    success = { // Optional
-        Log.d(TAG, "File created successfully: ${it.name}")
-    },
-    error = { // Optional
-        Log.d(TAG, "Error while converting this file.")
-    }
-)
+val file = AndroidTranscoder(file, AudioType.WAV, context) {
+    Log.d(TAG, "Progress%: $it")
+}.convert()
 ```
 
 ## Supported formats
-- AAC // TODO
-- MP3 // TODO
-- M4A // TODO
+- MP3
 - WAV
+- AAC // TODO
+- M4A // TODO
 - FLAC // TODO
