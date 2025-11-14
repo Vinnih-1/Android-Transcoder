@@ -12,7 +12,6 @@ import java.io.File
 import java.io.RandomAccessFile
 
 const val TIMEOUT_US = 10000L
-const val TAG = "AudioExtractor"
 
 internal class AudioExtractor(
     val inputFile: File,

@@ -1,6 +1,7 @@
 package io.github.vinnih.androidtranscoder.extractor
 
 import android.util.Log
+import io.github.vinnih.androidtranscoder.TAG
 import java.io.File
 import java.io.RandomAccessFile
 
