@@ -20,5 +20,5 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "Android(Transcoder"
+rootProject.name = "Android-Transcoder"
 include(":library")
