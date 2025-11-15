@@ -13,7 +13,7 @@ import java.io.RandomAccessFile
 const val TIMEOUT_US = 10000L
 
 internal class AudioExtractor(
-    val inputFile: File,
+    inputFile: File,
     cacheDir: String,
 ) {
     val outputFile: File =
@@ -39,6 +39,7 @@ internal class AudioExtractor(
         var isInEOS = false
         val bufferInfo = MediaCodec.BufferInfo()
         var dataSize = 0
+        val duration = mediaFormat.getLong(MediaFormat.KEY_DURATION)
         val channels = mediaFormat.getInteger(MediaFormat.KEY_CHANNEL_COUNT)
         val sampleRate = mediaFormat.getInteger(MediaFormat.KEY_SAMPLE_RATE)
 
@@ -56,7 +57,6 @@ internal class AudioExtractor(
                     } else {
                         mediaCodec.queueInputBuffer(indexInputBuffer, 0, sampleSize, mediaExtractor.sampleTime, 0)
                         mediaExtractor.advance()
-                        dataSize += sampleSize
                     }
                 }
             }
@@ -74,7 +74,8 @@ internal class AudioExtractor(
                         val pcmChunk = ByteArray(bufferInfo.size)
                         outputBuffer.get(pcmChunk)
                         fileOutputStream.write(pcmChunk, 0, pcmChunk.size)
-                        progress.updateDecodeProgress(inputFile.length(), dataSize.toLong())
+                        dataSize += pcmChunk.size
+                        progress.updateDecodeProgress((duration / 1_000_000.0 * sampleRate * channels * 2).toLong(), dataSize.toLong())
                         outputBuffer.clear()
                     }
 
