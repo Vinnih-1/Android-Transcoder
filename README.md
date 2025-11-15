@@ -11,8 +11,8 @@
 You can add Android Transcoder to your project using Gradle:
 
 ### Gradle (Kotlin DSL)
-```
-Not implemented yet.
+```kotlin
+implementation("io.github.vinnih-1:android-transcoder:1.0.0")
 ```
 
 ## Quickstart
