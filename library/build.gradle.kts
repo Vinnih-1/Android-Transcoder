@@ -2,7 +2,18 @@ plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.ktlint.android)
+    alias(libs.plugins.signing)
     alias(libs.plugins.maven.publish)
+}
+
+signing {
+    val secretKeyFile = File(System.getenv("SECRET_KEY_FILE"))
+    val signingPassword = project.findProperty("signing.password") as String? ?: System.getenv("SIGNING_PASSWORD")
+
+    if (secretKeyFile.exists() && signingPassword != null) {
+        useGpgCmd()
+        useInMemoryPgpKeys(secretKeyFile.readText(), signingPassword)
+    }
 }
 
 android {
