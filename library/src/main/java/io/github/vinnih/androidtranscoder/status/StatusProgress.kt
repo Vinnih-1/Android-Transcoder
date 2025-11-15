@@ -25,7 +25,7 @@ internal class StatusProgress(
         progress(decodeProgress + encodeProgress)
     }
 
-    fun calculeProgress(
+    fun calculateProgress(
         totalValue: Long,
         currentValue: Long,
     ): Int {
@@ -38,7 +38,7 @@ internal class StatusProgress(
         totalValue: Long,
         currentValue: Long,
     ) {
-        encodeProgress = calculeProgress(totalValue, currentValue) / stepsValue
+        encodeProgress = calculateProgress(totalValue, currentValue) / stepsValue
         status = Status.ENCODING
     }
 
@@ -46,7 +46,7 @@ internal class StatusProgress(
         totalValue: Long,
         currentValue: Long,
     ) {
-        decodeProgress = calculeProgress(totalValue, currentValue) / stepsValue
+        decodeProgress = calculateProgress(totalValue, currentValue) / stepsValue
         status = Status.DECODING
     }
 }
