@@ -12,10 +12,7 @@ import java.io.FileOutputStream
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
 
-internal class Mp3Encoder(
-    val reader: WavReader,
-    fileDir: String,
-) : EncoderBase() {
+internal class Mp3Encoder(val reader: WavReader, fileDir: String) : EncoderBase() {
     val outputFile: File =
         File(fileDir, "${reader.data.nameWithoutExtension}.mp3")
             .apply {
@@ -55,7 +52,14 @@ internal class Mp3Encoder(
             byteBuffer.get(shortBuffer, 0, byteBuffer.remaining())
             progress.updateEncodeProgress(reader.data.length(), totalBytesRead.toLong())
 
-            val encoded = androidLame.encodeBufferInterLeaved(shortBuffer, (bytesRead / (2 * reader.channels)), mp3Buffer)
+            val encoded = androidLame.encodeBufferInterLeaved(
+                shortBuffer,
+                (
+                    bytesRead /
+                        (2 * reader.channels)
+                    ),
+                mp3Buffer
+            )
 
             fileOutputStream.write(mp3Buffer, 0, encoded)
         }

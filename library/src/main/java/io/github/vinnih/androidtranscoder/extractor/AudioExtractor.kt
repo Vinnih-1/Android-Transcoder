@@ -12,10 +12,7 @@ import java.io.RandomAccessFile
 
 const val TIMEOUT_US = 10000L
 
-internal class AudioExtractor(
-    inputFile: File,
-    cacheDir: String,
-) {
+internal class AudioExtractor(inputFile: File, cacheDir: String) {
     val outputFile: File =
         File(cacheDir, "${inputFile.nameWithoutExtension}.wav")
             .apply {
@@ -27,7 +24,9 @@ internal class AudioExtractor(
     var mediaFormat: MediaFormat
 
     init {
-        mediaExtractor.setDataSource(inputFile.absolutePath).also { mediaExtractor.selectTrack(findAudioTrack()) }
+        mediaExtractor.setDataSource(inputFile.absolutePath).also {
+            mediaExtractor.selectTrack(findAudioTrack())
+        }
         mediaFormat = mediaExtractor.getTrackFormat(findAudioTrack())
         mediaCodec = MediaCodec.createDecoderByType(mediaFormat.getString(MediaFormat.KEY_MIME)!!)
         mediaCodec.configure(mediaFormat, null, null, 0).also { mediaCodec.start() }
@@ -52,10 +51,22 @@ internal class AudioExtractor(
                     val sampleSize = mediaExtractor.readSampleData(inputBuffer!!, 0)
 
                     if (sampleSize < 0) {
-                        mediaCodec.queueInputBuffer(indexInputBuffer, 0, 0, 0, MediaCodec.BUFFER_FLAG_END_OF_STREAM)
+                        mediaCodec.queueInputBuffer(
+                            indexInputBuffer,
+                            0,
+                            0,
+                            0,
+                            MediaCodec.BUFFER_FLAG_END_OF_STREAM
+                        )
                         isInEOS = true
                     } else {
-                        mediaCodec.queueInputBuffer(indexInputBuffer, 0, sampleSize, mediaExtractor.sampleTime, 0)
+                        mediaCodec.queueInputBuffer(
+                            indexInputBuffer,
+                            0,
+                            sampleSize,
+                            mediaExtractor.sampleTime,
+                            0
+                        )
                         mediaExtractor.advance()
                     }
                 }
@@ -75,7 +86,14 @@ internal class AudioExtractor(
                         outputBuffer.get(pcmChunk)
                         fileOutputStream.write(pcmChunk, 0, pcmChunk.size)
                         dataSize += pcmChunk.size
-                        progress.updateDecodeProgress((duration / 1_000_000.0 * sampleRate * channels * 2).toLong(), dataSize.toLong())
+                        progress.updateDecodeProgress(
+                            (
+                                duration / 1_000_000.0 * sampleRate *
+                                    channels *
+                                    2
+                                ).toLong(),
+                            dataSize.toLong()
+                        )
                         outputBuffer.clear()
                     }
 

@@ -8,7 +8,8 @@ plugins {
 
 signing {
     val secretKeyFile = File(System.getenv("SECRET_KEY_FILE"))
-    val signingPassword = project.findProperty("signing.password") as String? ?: System.getenv("SIGNING_PASSWORD")
+    val signingPassword =
+        project.findProperty("signing.password") as String? ?: System.getenv("SIGNING_PASSWORD")
 
     if (secretKeyFile.exists() && signingPassword != null) {
         useGpgCmd()

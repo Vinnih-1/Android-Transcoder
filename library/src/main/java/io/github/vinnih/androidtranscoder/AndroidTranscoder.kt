@@ -11,7 +11,7 @@ class AndroidTranscoder(
     val file: File,
     val to: AudioType,
     val context: Context,
-    val progress: (progress: Int) -> Unit,
+    val progress: (progress: Int) -> Unit
 ) {
     suspend fun convert(): File = EncoderManager(file, context, to, progress).convert()
 }

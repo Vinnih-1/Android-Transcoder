@@ -5,10 +5,7 @@ import io.github.vinnih.androidtranscoder.extractor.WavReader
 import io.github.vinnih.androidtranscoder.status.StatusProgress
 import java.io.File
 
-internal class WavEncoder(
-    val reader: WavReader,
-    fileDir: String,
-) : EncoderBase() {
+internal class WavEncoder(val reader: WavReader, fileDir: String) : EncoderBase() {
     val outputFile =
         File(fileDir, reader.data.name)
             .apply { createNewFile() }
