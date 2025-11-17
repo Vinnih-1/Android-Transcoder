@@ -55,6 +55,7 @@ dependencies {
     implementation(platform(libs.compose.bom))
     implementation(libs.preview)
     implementation(libs.compose.viewmodel)
+    implementation(libs.compose.activity)
 
     testImplementation(libs.junit)
 
