@@ -7,37 +7,38 @@ import io.github.vinnih.androidtranscoder.exceptions.IncompatibleAudioTypeExcept
 import io.github.vinnih.androidtranscoder.extractor.AudioExtractor
 import io.github.vinnih.androidtranscoder.status.StatusProgress
 import io.github.vinnih.androidtranscoder.types.AudioType
-import java.io.File
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import java.io.File
 
 internal class EncoderManager(
     val file: File,
     context: Context,
     val to: AudioType,
-    progress: (progress: Int) -> Unit
+    progress: (progress: Int) -> Unit,
 ) {
     private val cacheDir = context.cacheDir.absolutePath
     private val filesDir = context.filesDir.absolutePath
     private val statusProgress = StatusProgress(if (to != AudioType.WAV) 2 else 1, progress)
 
-    suspend fun convert(): File = withContext(Dispatchers.IO) {
-        if (!checkCompatibility(file)) {
-            throw IncompatibleAudioTypeException("Incompatible Audio Type")
-        }
-        val reader = AudioExtractor(file, cacheDir).extract(statusProgress)
-        val file =
-            when (to) {
-                AudioType.MP3 -> Mp3Encoder(reader, filesDir).encode(statusProgress)
-                AudioType.WAV -> WavEncoder(reader, filesDir).encode(statusProgress)
-                AudioType.M4A -> TODO()
-                AudioType.AAC -> TODO()
-                AudioType.FLAC -> TODO()
+    suspend fun convert(): File =
+        withContext(Dispatchers.IO) {
+            if (!checkCompatibility(file)) {
+                throw IncompatibleAudioTypeException("Incompatible Audio Type")
             }
-        reader.dispose()
+            val reader = AudioExtractor(file, cacheDir).extract(statusProgress)
+            val file =
+                when (to) {
+                    AudioType.MP3 -> Mp3Encoder(reader, filesDir).encode(statusProgress)
+                    AudioType.WAV -> WavEncoder(reader, filesDir).encode(statusProgress)
+                    AudioType.M4A -> TODO()
+                    AudioType.AAC -> TODO()
+                    AudioType.FLAC -> TODO()
+                }
+            reader.dispose()
 
-        return@withContext file
-    }
+            return@withContext file
+        }
 
     fun checkCompatibility(file: File): Boolean {
         val extension = file.extension

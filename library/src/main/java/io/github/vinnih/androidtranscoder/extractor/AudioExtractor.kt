@@ -12,7 +12,10 @@ import java.io.RandomAccessFile
 
 const val TIMEOUT_US = 10000L
 
-internal class AudioExtractor(inputFile: File, cacheDir: String) {
+internal class AudioExtractor(
+    inputFile: File,
+    cacheDir: String,
+) {
     val outputFile: File =
         File(cacheDir, "${inputFile.nameWithoutExtension}.wav")
             .apply {
@@ -56,7 +59,7 @@ internal class AudioExtractor(inputFile: File, cacheDir: String) {
                             0,
                             0,
                             0,
-                            MediaCodec.BUFFER_FLAG_END_OF_STREAM
+                            MediaCodec.BUFFER_FLAG_END_OF_STREAM,
                         )
                         isInEOS = true
                     } else {
@@ -65,7 +68,7 @@ internal class AudioExtractor(inputFile: File, cacheDir: String) {
                             0,
                             sampleSize,
                             mediaExtractor.sampleTime,
-                            0
+                            0,
                         )
                         mediaExtractor.advance()
                     }
@@ -91,8 +94,8 @@ internal class AudioExtractor(inputFile: File, cacheDir: String) {
                                 duration / 1_000_000.0 * sampleRate *
                                     channels *
                                     2
-                                ).toLong(),
-                            dataSize.toLong()
+                            ).toLong(),
+                            dataSize.toLong(),
                         )
                         outputBuffer.clear()
                     }

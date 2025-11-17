@@ -9,7 +9,7 @@ internal class WavReader(
     val channels: Int,
     val sampleRate: Int,
     val dataSize: Int,
-    val data: File
+    val data: File,
 ) {
     private val randomAccessFile = RandomAccessFile(data, "rw")
 
