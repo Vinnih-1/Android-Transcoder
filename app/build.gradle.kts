@@ -52,10 +52,11 @@ dependencies {
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material3)
-    implementation(platform(libs.compose.bom))
     implementation(libs.preview)
     implementation(libs.compose.viewmodel)
     implementation(libs.compose.activity)
+    implementation(platform(libs.compose.bom))
+    implementation(project(":library"))
 
     testImplementation(libs.junit)
 
