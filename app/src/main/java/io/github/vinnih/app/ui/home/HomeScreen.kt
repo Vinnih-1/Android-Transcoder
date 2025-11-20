@@ -2,6 +2,7 @@ package io.github.vinnih.app.ui.home
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
@@ -9,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
@@ -28,6 +30,7 @@ import androidx.compose.ui.unit.dp
 import io.github.vinnih.app.ui.components.SongCard
 import kotlinx.coroutines.launch
 
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
 @Composable
 fun HomeScreen(viewModel: HomeViewModel) {
     val context = LocalContext.current
@@ -85,7 +88,8 @@ fun HomeScreen(viewModel: HomeViewModel) {
                         SongCard(
                             title = it.nameWithoutExtension,
                             extension = it.extension,
-                            uri = it.absolutePath,
+                            file = it,
+                            viewModel = viewModel,
                         )
                     }
                 }

@@ -11,6 +11,10 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
@@ -22,6 +26,8 @@ import io.github.vinnih.app.ui.components.SongType.FLAC
 import io.github.vinnih.app.ui.components.SongType.M4A
 import io.github.vinnih.app.ui.components.SongType.MP3
 import io.github.vinnih.app.ui.components.SongType.WAV
+import io.github.vinnih.app.ui.home.HomeViewModel
+import java.io.File
 
 enum class SongType(
     val icon: Int,
@@ -48,14 +54,23 @@ private fun getByExtension(extension: String): SongType =
 fun SongCard(
     title: String,
     extension: String,
-    uri: String,
+    file: File,
+    viewModel: HomeViewModel,
 ) {
+    var openModal by remember { mutableStateOf(false) }
     val songType = getByExtension(extension)
+
+    when {
+        openModal ->
+            SongModal(songType = songType, file = file, onDismiss = {
+                openModal = false
+            }, viewModel = viewModel)
+    }
 
     Card(
         modifier = Modifier.width(128.dp).height(128.dp),
         onClick = {
-            // TODO
+            openModal = !openModal
         },
     ) {
         Column(
