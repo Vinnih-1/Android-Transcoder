@@ -34,6 +34,7 @@ class HomeViewModel : ViewModel() {
     fun convertFile(
         context: Context,
         file: File,
+        to: SongType,
         progress: (Int) -> Unit,
         success: (File) -> Unit,
     ) {
@@ -42,7 +43,7 @@ class HomeViewModel : ViewModel() {
                 AndroidTranscoder(
                     context = context,
                     file = file,
-                    to = AudioType.MP3,
+                    to = AudioType.valueOf(to.name),
                     progress = progress,
                 ).convert()
 
