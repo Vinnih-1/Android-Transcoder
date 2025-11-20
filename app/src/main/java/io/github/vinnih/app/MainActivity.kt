@@ -6,6 +6,7 @@ import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import io.github.vinnih.app.ui.home.HomeScreen
 import io.github.vinnih.app.ui.home.HomeViewModel
+import io.github.vinnih.app.ui.theme.AppTheme
 
 class MainActivity : ComponentActivity() {
     private val homeViewModel: HomeViewModel by viewModels()
@@ -14,9 +15,11 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
 
         setContent {
-            HomeScreen(
-                viewModel = homeViewModel,
-            )
+            AppTheme {
+                HomeScreen(
+                    viewModel = homeViewModel,
+                )
+            }
         }
     }
 }
