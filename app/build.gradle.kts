@@ -52,15 +52,16 @@ dependencies {
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material3)
-    implementation(libs.preview)
+    implementation(libs.tooling.preview)
     implementation(libs.compose.viewmodel)
     implementation(libs.compose.activity)
     implementation(platform(libs.compose.bom))
     implementation(project(":library"))
+    implementation(libs.androidx.ui.text.google.fonts)
 
     testImplementation(libs.junit)
 
-    debugImplementation(libs.preview)
+    debugImplementation(libs.tooling.ui)
 
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
