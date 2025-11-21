@@ -15,6 +15,9 @@ You can add Android Transcoder to your project using Gradle:
 implementation("io.github.vinnih-1:android-transcoder:1.0.0")
 ```
 
+## Example
+https://github.com/user-attachments/assets/b0684ca1-61ad-44c4-85de-44159ae526c2
+
 ## Quickstart
 ```kotlin
 val file = AndroidTranscoder(file, AudioType.WAV, context) {
