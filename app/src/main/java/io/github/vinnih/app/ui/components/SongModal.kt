@@ -19,6 +19,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -32,7 +33,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import io.github.vinnih.app.R
-import io.github.vinnih.app.ui.home.HomeViewModel
+import io.github.vinnih.app.ui.home.HomeController
 import java.io.File
 
 @Composable
@@ -40,11 +41,11 @@ fun SongModal(
     songType: SongType,
     file: File,
     onDismiss: () -> Unit,
-    viewModel: HomeViewModel,
+    controller: HomeController,
 ) {
     var expanded by remember { mutableStateOf(false) }
     var selected by remember { mutableStateOf(SongType.entries.first { it.name != songType.name }) }
-    var currentProgress by remember { mutableStateOf(0f) }
+    var currentProgress by remember { mutableFloatStateOf(0f) }
     var isConverting by remember { mutableStateOf(false) }
     val context = LocalContext.current
 
@@ -125,7 +126,7 @@ fun SongModal(
                                 "Converting to ${selected.name} format...",
                                 Toast.LENGTH_SHORT,
                             ).show()
-                        viewModel
+                        controller
                             .convertFile(context = context, file = file, to = selected, progress = {
                                 currentProgress = it.toFloat() / 100
                             }) {

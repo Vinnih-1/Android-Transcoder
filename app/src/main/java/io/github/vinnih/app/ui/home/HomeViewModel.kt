@@ -14,10 +14,12 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.File
 
-class HomeViewModel : ViewModel() {
-    var files = MutableStateFlow(listOf<File>())
+class HomeViewModel :
+    ViewModel(),
+    HomeController {
+    override var files = MutableStateFlow(listOf<File>())
 
-    suspend fun refreshFiles(context: Context) =
+    override suspend fun refreshFiles(context: Context) =
         withContext(Dispatchers.IO) {
             delay(500)
             files.update {
@@ -31,7 +33,7 @@ class HomeViewModel : ViewModel() {
             }
         }
 
-    fun convertFile(
+    override fun convertFile(
         context: Context,
         file: File,
         to: SongType,

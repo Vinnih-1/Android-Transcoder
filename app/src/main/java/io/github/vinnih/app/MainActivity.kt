@@ -17,7 +17,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             AppTheme {
                 HomeScreen(
-                    viewModel = homeViewModel,
+                    controller = homeViewModel,
                 )
             }
         }

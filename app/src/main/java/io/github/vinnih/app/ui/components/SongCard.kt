@@ -26,7 +26,7 @@ import io.github.vinnih.app.ui.components.SongType.FLAC
 import io.github.vinnih.app.ui.components.SongType.M4A
 import io.github.vinnih.app.ui.components.SongType.MP3
 import io.github.vinnih.app.ui.components.SongType.WAV
-import io.github.vinnih.app.ui.home.HomeViewModel
+import io.github.vinnih.app.ui.home.HomeController
 import java.io.File
 
 enum class SongType(
@@ -55,7 +55,7 @@ fun SongCard(
     title: String,
     extension: String,
     file: File,
-    viewModel: HomeViewModel,
+    controller: HomeController,
 ) {
     var openModal by remember { mutableStateOf(false) }
     val songType = getByExtension(extension)
@@ -64,7 +64,7 @@ fun SongCard(
         openModal ->
             SongModal(songType = songType, file = file, onDismiss = {
                 openModal = false
-            }, viewModel = viewModel)
+            }, controller = controller)
     }
 
     Card(

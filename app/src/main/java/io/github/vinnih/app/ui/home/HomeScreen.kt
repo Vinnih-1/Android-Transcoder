@@ -32,15 +32,15 @@ import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
 @Composable
-fun HomeScreen(viewModel: HomeViewModel) {
+fun HomeScreen(controller: HomeController) {
     val context = LocalContext.current
     val state = rememberPullToRefreshState()
     val scope = rememberCoroutineScope()
     var isRefreshing by remember { mutableStateOf(false) }
-    val files = viewModel.files.collectAsState()
+    val files = controller.files.collectAsState()
 
     LaunchedEffect(Unit) {
-        viewModel.refreshFiles(context)
+        controller.refreshFiles(context)
     }
 
     Scaffold { paddingValues ->
@@ -50,7 +50,7 @@ fun HomeScreen(viewModel: HomeViewModel) {
             onRefresh = {
                 scope.launch {
                     isRefreshing = true
-                    viewModel.refreshFiles(context)
+                    controller.refreshFiles(context)
                     isRefreshing = false
                 }
             },
@@ -89,7 +89,7 @@ fun HomeScreen(viewModel: HomeViewModel) {
                             title = it.nameWithoutExtension,
                             extension = it.extension,
                             file = it,
-                            viewModel = viewModel,
+                            controller = controller,
                         )
                     }
                 }
