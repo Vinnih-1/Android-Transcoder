@@ -30,10 +30,13 @@ import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import io.github.vinnih.app.R
+import io.github.vinnih.app.ui.home.FakeHomeController
 import io.github.vinnih.app.ui.home.HomeController
+import io.github.vinnih.app.ui.theme.AppTheme
 import java.io.File
 
 @Composable
@@ -146,5 +149,16 @@ fun SongModal(
                 )
             }
         }
+    }
+}
+
+@Preview
+@Composable
+fun SongModalPreview() {
+    val audioFile = File("F:\\Android\\AndroidTranscoder\\Audio Example.MP3")
+
+    AppTheme {
+        SongModal(songType = SongType.MP3, file = audioFile, onDismiss = {
+        }, controller = FakeHomeController())
     }
 }

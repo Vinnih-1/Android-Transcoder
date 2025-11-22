@@ -19,6 +19,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import io.github.vinnih.app.R
 import io.github.vinnih.app.ui.components.SongType.AAC
@@ -26,7 +27,9 @@ import io.github.vinnih.app.ui.components.SongType.FLAC
 import io.github.vinnih.app.ui.components.SongType.M4A
 import io.github.vinnih.app.ui.components.SongType.MP3
 import io.github.vinnih.app.ui.components.SongType.WAV
+import io.github.vinnih.app.ui.home.FakeHomeController
 import io.github.vinnih.app.ui.home.HomeController
+import io.github.vinnih.app.ui.theme.AppTheme
 import java.io.File
 
 enum class SongType(
@@ -90,5 +93,20 @@ fun SongCard(
                 overflow = TextOverflow.Ellipsis,
             )
         }
+    }
+}
+
+@Preview
+@Composable
+fun SongCardPreview() {
+    val audioFile = File("F:\\Android\\AndroidTranscoder\\Audio Example.MP3")
+
+    AppTheme {
+        SongCard(
+            title = audioFile.nameWithoutExtension,
+            extension = audioFile.extension,
+            file = audioFile,
+            controller = FakeHomeController(),
+        )
     }
 }
