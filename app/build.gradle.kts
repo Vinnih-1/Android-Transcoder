@@ -58,6 +58,8 @@ dependencies {
     implementation(platform(libs.compose.bom))
     implementation(project(":library"))
     implementation(libs.androidx.ui.text.google.fonts)
+    implementation(libs.media3.exoplayer)
+    implementation(libs.media3.uicompose)
 
     testImplementation(libs.junit)
 
