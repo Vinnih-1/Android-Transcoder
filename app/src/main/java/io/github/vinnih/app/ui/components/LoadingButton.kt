@@ -33,7 +33,6 @@ fun LoadingButton(
     val backgroundColor = MaterialTheme.colorScheme.primary
     val progressColor = MaterialTheme.colorScheme.secondary
     val contentColor = MaterialTheme.colorScheme.onPrimary
-    println(progress)
 
     Button(
         enabled = enable,
