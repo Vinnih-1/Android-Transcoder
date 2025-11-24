@@ -27,7 +27,8 @@ class PlayerViewModel :
         val metadata: MediaMetadata =
             MediaMetadata
                 .Builder()
-                .setTitle(
+                .setTitle(file.name)
+                .setDisplayTitle(
                     file.nameWithoutExtension,
                 ).build()
         val mediaItem =
