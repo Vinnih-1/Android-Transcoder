@@ -45,7 +45,7 @@ enum class SongType(
     FLAC(icon = R.drawable.flac, contentDescription = ""),
 }
 
-private fun getByExtension(extension: String): SongType =
+fun getByExtension(extension: String): SongType =
     when (extension.lowercase()) {
         "mp3" -> MP3
         "wav" -> WAV
