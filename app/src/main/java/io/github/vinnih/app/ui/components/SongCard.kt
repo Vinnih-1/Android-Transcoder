@@ -1,5 +1,6 @@
 package io.github.vinnih.app.ui.components
 
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -17,6 +18,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
@@ -59,6 +61,7 @@ fun SongCard(
     extension: String,
     file: File,
     controller: HomeController,
+    onClick: () -> Unit,
 ) {
     var openModal by remember { mutableStateOf(false) }
     val songType = getByExtension(extension)
@@ -71,10 +74,17 @@ fun SongCard(
     }
 
     Card(
-        modifier = Modifier.width(128.dp).height(128.dp),
-        onClick = {
-            openModal = !openModal
-        },
+        modifier =
+            Modifier.width(128.dp).height(128.dp).pointerInput(Unit) {
+                detectTapGestures(
+                    onTap = {
+                        onClick()
+                    },
+                    onLongPress = {
+                        openModal = true
+                    },
+                )
+            },
     ) {
         Column(
             modifier = Modifier.fillMaxSize(),
@@ -107,6 +117,7 @@ fun SongCardPreview() {
             extension = audioFile.extension,
             file = audioFile,
             controller = FakeHomeController(),
+            onClick = {},
         )
     }
 }
