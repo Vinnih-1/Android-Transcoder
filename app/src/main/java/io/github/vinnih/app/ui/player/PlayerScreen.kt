@@ -28,8 +28,8 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import io.github.vinnih.app.R
 import io.github.vinnih.app.ui.components.PlayerControls
+import io.github.vinnih.app.ui.components.getByExtension
 import io.github.vinnih.app.ui.theme.AppTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -40,6 +40,7 @@ fun PlayerScreen(
 ) {
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     val player = controller.player.collectAsState().value!!
+    val extension = getByExtension(player.mediaMetadata.title.toString().substringAfterLast("."))
 
     Scaffold { paddingValues ->
         ModalBottomSheet(
@@ -67,10 +68,10 @@ fun PlayerScreen(
                 verticalArrangement = Arrangement.SpaceAround,
             ) {
                 Column(Modifier.padding(top = 20.dp)) {
-                    Icon(painter = painterResource(R.drawable.mp3), contentDescription = "")
+                    Icon(painter = painterResource(extension.icon), contentDescription = "")
                 }
                 Text(
-                    text = player.mediaMetadata.title.toString(),
+                    text = player.mediaMetadata.displayTitle.toString(),
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                 )
