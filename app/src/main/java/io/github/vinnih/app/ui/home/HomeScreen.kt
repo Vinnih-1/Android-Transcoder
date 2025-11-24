@@ -1,5 +1,6 @@
 package io.github.vinnih.app.ui.home
 
+import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
@@ -11,6 +12,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
@@ -28,36 +30,58 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import io.github.vinnih.app.ui.components.AppBottomBar
+import io.github.vinnih.app.ui.components.AppTopBar
 import io.github.vinnih.app.ui.components.SongCard
+import io.github.vinnih.app.ui.player.FakePlayerController
+import io.github.vinnih.app.ui.player.PlayerController
+import io.github.vinnih.app.ui.player.PlayerScreen
 import io.github.vinnih.app.ui.theme.AppTheme
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
 @Composable
-fun HomeScreen(controller: HomeController) {
+fun HomeScreen(
+    homeController: HomeController,
+    playerController: PlayerController,
+) {
     val context = LocalContext.current
     val state = rememberPullToRefreshState()
     val scope = rememberCoroutineScope()
     var isRefreshing by remember { mutableStateOf(false) }
-    val files = controller.files.collectAsState()
+    var showPlayerScreen by remember { mutableStateOf(false) }
+    val files = homeController.files.collectAsState()
+    val player = playerController.player.collectAsState().value!!
 
     LaunchedEffect(Unit) {
-        controller.refreshFiles(context)
+        homeController.refreshFiles(context)
     }
 
-    Scaffold { paddingValues ->
+    Scaffold(topBar = {
+        AppTopBar()
+    }, bottomBar = {
+        AppBottomBar(controller = playerController, onClick = {
+            if (player.currentMediaItem == null) {
+                Toast.makeText(context, "There's nothing playing yet!", Toast.LENGTH_SHORT).show()
+            } else {
+                showPlayerScreen = true
+            }
+        })
+    }) { paddingValues ->
         PullToRefreshBox(
             modifier = Modifier.padding(paddingValues),
             state = state,
             onRefresh = {
                 scope.launch {
                     isRefreshing = true
-                    controller.refreshFiles(context)
+                    homeController.refreshFiles(context)
                     isRefreshing = false
                 }
             },
             isRefreshing = isRefreshing,
         ) {
+            HorizontalDivider(thickness = 2.dp, modifier = Modifier.fillMaxWidth())
+
             if (files.value.isEmpty()) {
                 Column(
                     modifier = Modifier.fillMaxSize(),
@@ -71,9 +95,9 @@ fun HomeScreen(controller: HomeController) {
             }
 
             Column(
-                modifier = Modifier.fillMaxSize(),
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally,
+                modifier = Modifier.padding(top = 10.dp),
             ) {
                 FlowRow(
                     modifier =
@@ -91,11 +115,20 @@ fun HomeScreen(controller: HomeController) {
                             title = it.nameWithoutExtension,
                             extension = it.extension,
                             file = it,
-                            controller = controller,
+                            controller = homeController,
+                            onClick = {
+                                playerController.setMedia(it)
+                                playerController.play()
+                                showPlayerScreen = true
+                            },
                         )
                     }
                 }
             }
+        }
+
+        if (showPlayerScreen) {
+            PlayerScreen(controller = playerController) { showPlayerScreen = false }
         }
     }
 }
@@ -104,6 +137,6 @@ fun HomeScreen(controller: HomeController) {
 @Composable
 fun HomeScreenPreview() {
     AppTheme {
-        HomeScreen(controller = FakeHomeController())
+        HomeScreen(homeController = FakeHomeController(), playerController = FakePlayerController())
     }
 }
