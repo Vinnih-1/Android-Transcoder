@@ -110,7 +110,14 @@ internal class AudioExtractor(
             }
         }
 
-        val wavReader = WavReader(channels, sampleRate, dataSize, outputFile).writeHeader()
+        val wavReader =
+            WavReader(
+                channels,
+                duration,
+                sampleRate,
+                dataSize,
+                outputFile,
+            ).writeHeader()
 
         fileOutputStream.close()
         mediaCodec.stop()
