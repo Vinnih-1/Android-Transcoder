@@ -31,9 +31,6 @@ internal class EncoderManager(
                 when (to) {
                     AudioType.MP3 -> Mp3Encoder(reader, filesDir).encode(statusProgress)
                     AudioType.WAV -> WavEncoder(reader, filesDir).encode(statusProgress)
-                    AudioType.M4A -> TODO()
-                    AudioType.AAC -> TODO()
-                    AudioType.FLAC -> TODO()
                 }
             reader.dispose()
 
