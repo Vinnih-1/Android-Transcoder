@@ -5,8 +5,9 @@ import io.github.vinnih.androidtranscoder.TAG
 import java.io.File
 import java.io.RandomAccessFile
 
-internal class WavReader(
+data class WavReader(
     val channels: Int,
+    val duration: Long,
     val sampleRate: Int,
     val dataSize: Int,
     val data: File,
